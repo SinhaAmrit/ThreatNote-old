@@ -301,9 +301,9 @@ const Index = () => {
         {/* Control Panel */}
         <Card className="card-corporate mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-primary">
+            <CardTitle className="flex items-center gap-3 text-accent">
               <Database className="w-6 h-6" />
-              <span>Advisory Configuration</span>
+              <span className="text-primary">Advisory Configuration</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -343,9 +343,9 @@ const Index = () => {
         {/* Action Buttons */}
         {advisories.length > 0 && <Card className="card-corporate mb-8">
             <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-primary">
+              <CardTitle className="flex items-center gap-3 text-accent">
                 <FileText className="w-6 h-6" />
-                <span>Export & Preview</span>
+                <span className="text-primary">Export & Preview</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -358,10 +358,10 @@ const Index = () => {
                   <Copy className="w-4 h-4 mr-2" />
                   Copy HTML
                 </Button>
-                <Button onClick={downloadHTML} className="btn-ltim-accent btn-enhanced">
+                {/* <Button onClick={downloadHTML} className="btn-ltim-accent btn-enhanced">
                   <Download className="w-4 h-4 mr-2" />
                   Download HTML
-                </Button>
+                </Button> */}
               </div>
             </CardContent>
           </Card>}
