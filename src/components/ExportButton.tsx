@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { AdvisoryData } from "./AdvisoryForm";
 import { getCurrentMascot, getCurrentDateIST } from "@/utils/mascotHelper";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Download, Copy } from "lucide-react";
+import { FileText, Copy } from "lucide-react";
 import ltimLogo from "@/assets/ltimindtree-official-logo.svg";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 interface ExportButtonProps {
   advisories: AdvisoryData[];
 }
@@ -64,59 +61,184 @@ export function ExportButton({
       return colors[severity as keyof typeof colors] || colors.informational;
     };
     
+    // Key threats - using table layout for Outlook compatibility
     const keyThreatsHTML = threatNames.length > 0 ? 
-      `<br><br>Key Threat${threatNames.length > 1 ? 's' : ''}: ${advisories.filter(a => a.name).map(advisory => 
-        `<span style="display: inline-flex; align-items: center; gap: 6px; margin-right: 12px;"><span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background-color: ${getSeverityColorHex(advisory.severity)};"></span><span style="color: #FF6F00; font-weight: 600;">${advisory.name}</span></span>`
-      ).join('')}` : '';
+      `<br><br>Key Threat${threatNames.length > 1 ? 's' : ''}: ` +
+      advisories.filter(a => a.name).map(advisory => 
+        `<table style="display: inline-table; vertical-align: middle; margin-right: 12px;"><tr>` +
+        `<td style="width: 12px; height: 12px; background-color: ${getSeverityColorHex(advisory.severity)}; padding: 0; margin: 0; border: 0;"></td>` +
+        `<td style="color: #FF6F00; font-weight: 600; padding-left: 6px; padding-top: 0; padding-bottom: 0; border: 0;">${advisory.name}</td>` +
+        `</tr></table>`
+      ).join('') : '';
     
     const overallSummary = `Today's <strong>${currentMascot.name}: <u>${currentMascot.description}</u></strong> advisory reports ${advisories.length} threat${advisories.length > 1 ? 's' : ''} identified across global landscapes${severityText}${keyThreatsHTML}`;
+    
+    // Outlook-safe email header with VML gradients and table layout
     const emailHeader = `
-      <div style="max-width: 900px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #ffffff;">
-        <!-- Header with Mascot -->
-        <div style="background: linear-gradient(135deg, #512DA8, #6A42C2); padding: 30px; border-radius: 12px 12px 0 0; color: white; margin-bottom: 0;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
-            <div style="display: flex; align-items: center; gap: 20px;">
-              <img src="data:image/svg+xml;base64,${await getBase64Image(ltimLogo)}" 
-                   width="60" height="60" 
-                   alt="LTIMindtree" 
-                   style="background: white; padding: 12px; border-radius: 8px; display: block;" />
-              <div>
-                <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">LTIMindtree Threat Intelligence Advisory</div>
-                <div style="font-size: 16px; opacity: 0.9;">Corporate Security Team</div>
-              </div>
-            </div>
-            <div style="text-align: right; font-size: 16px; opacity: 0.9;">
-              ${currentDateIST}
-            </div>
-          </div>
-          
-          <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 20px;">
-            <img src="data:image/jpeg;base64,${await getBase64Image(currentMascot.image)}" 
-                 width="80" height="80" 
-                 alt="${currentMascot.name}" 
-                 style="border-radius: 12px; display: block; object-fit: cover;" />
-            <div>
-              <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">${currentMascot.name}</div>
-              <div style="font-size: 16px; opacity: 0.9;">${currentMascot.description}</div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Introduction & Summary -->
-        <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-          <p style="margin: 0 0 25px 0; color: #666; font-size: 15px; line-height: 1.6;">
-            Hello Team,<br><br>
-            Please find below the Daily Threat Advisory from the Corporate Security Team. This report highlights key cybersecurity threats, vulnerabilities, and risks identified across global landscapes. We aim to keep you informed and prepared by providing timely insights into emerging security challenges.
-          </p>
-          <div style="background: linear-gradient(135deg, #f8f9fa, #ffffff); padding: 25px; border-left: 5px solid #FF6F00; border-radius: 8px; margin-bottom: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <h3 style="margin: 0 0 15px 0; color: #512DA8; font-size: 20px; font-weight: 700;">
-              Overall Summary
-            </h3>
-            <p style="margin: 0; color: #444; font-size: 16px; line-height: 1.6; white-space: pre-line;">${overallSummary}</p>
-          </div>
-        </div>
-      </div>
+      <!-- Outer wrapper table for maximum compatibility -->
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 0; padding: 0; border-collapse: collapse; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <tr>
+          <td align="center" style="padding: 20px;">
+            <!-- Main container table -->
+            <table border="0" cellpadding="0" cellspacing="0" width="90%" style="max-width: 90%; margin: 0 auto; border-collapse: collapse; background: #ffffff;">
+              
+              <!-- Header with gradient background and VML fallback -->
+              <tr>
+                <td style="padding: 0;">
+                  <!--[if mso]>
+                  <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width: 100%; height: 200px;">
+                    <v:fill type="gradient" color="#512DA8" color2="#6A42C2" angle="135" />
+                    <v:textbox inset="30px,30px,30px,20px" style="mso-fit-shape-to-text:true;">
+                  <![endif]-->
+                  
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #512DA8; border-collapse: collapse;">
+                    <tr>
+                      <td style="padding: 30px; background: linear-gradient(135deg, #512DA8, #6A42C2);">
+                      
+                        <!--[if !mso]><!-- -->
+                        <div style="background: linear-gradient(135deg, #512DA8, #6A42C2);">
+                        <!--<![endif]-->
+                        
+                        <!-- Header content table -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; margin-bottom: 25px;">
+                          <tr>
+                            <!-- Logo and title -->
+                            <td width="70%" style="vertical-align: top;">
+                              <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                                <tr>
+                                  <!-- Logo -->
+                                  <td style="vertical-align: top; padding-right: 20px;">
+                                    <!--[if mso]>
+                                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" arcsize="13%" fill="true" stroke="false" style="width: 60px; height: 60px;">
+                                      <v:fill color="#ffffff" />
+                                      <v:textbox inset="12px,12px,12px,12px">
+                                    <![endif]-->
+                                    <div style="background: white; padding: 12px; width: 36px; height: 36px; border-radius: 8px; display: inline-block;">
+                                      <img src="data:image/svg+xml;base64,${await getBase64Image(ltimLogo)}" 
+                                           width="36" height="36" 
+                                           alt="LTIMindtree" 
+                                           style="display: block; border: 0;" />
+                                    </div>
+                                    <!--[if mso]>
+                                      </v:textbox>
+                                    </v:roundrect>
+                                    <![endif]-->
+                                  </td>
+                                   <!-- Title text -->
+                                  <td style="vertical-align: top;">
+                                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px; color: #ffffff; line-height: 1.2;">LTIMindtree Threat Intelligence Advisory</div>
+                                    <div style="font-size: 16px; color: #ffffff;">Corporate Security Team</div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                            <!-- Date -->
+                            <td width="30%" style="text-align: right; font-size: 16px; color: #ffffff; vertical-align: top;">
+                              ${currentDateIST}
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <!-- Mascot section with semi-transparent background -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                          <tr>
+                            <td style="background: #7258D4; padding: 20px;">
+                              <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                                <tr>
+                                  <!-- Mascot image -->
+                                  <td style="vertical-align: top; padding-right: 20px;">
+                                    <!--[if mso]>
+                                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" arcsize="15%" fill="true" stroke="false" style="width: 80px; height: 80px;">
+                                      <v:fill src="data:image/jpeg;base64,${await getBase64Image(currentMascot.image)}" type="frame" />
+                                    </v:roundrect>
+                                    <![endif]-->
+                                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; display: inline-block;">
+                                      <img src="data:image/jpeg;base64,${await getBase64Image(currentMascot.image)}" 
+                                           width="80" height="80" 
+                                           alt="${currentMascot.name}" 
+                                           style="display: block; border: 0; width: 80px; height: 80px; object-fit: cover;" />
+                                    </div>
+                                  </td>
+                                   <!-- Mascot text -->
+                                  <td style="vertical-align: top;">
+                                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #ffffff; line-height: 1.2;">${currentMascot.name}</div>
+                                    <div style="font-size: 16px; color: #ffffff; line-height: 1.4;">${currentMascot.description}</div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <!--[if !mso]><!-- -->
+                        </div>
+                        <!--<![endif]-->
+                        
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <!--[if mso]>
+                    </v:textbox>
+                  </v:rect>
+                  <![endif]-->
+                </td>
+              </tr>
+              
+              <!-- Introduction & Summary with shadow wrapper -->
+              <tr>
+                <td style="padding: 20px;">
+                  <!-- Shadow wrapper table -->
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                    <!-- Light shadow background for Outlook -->
+                    <tr>
+                      <td style="background: #f5f5f5; padding: 2px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; background: #ffffff; border: 1px solid #e0e0e0;">
+                          <tr>
+                            <td style="padding: 30px;">
+                              
+                              <!-- Introduction text -->
+                              <div style="margin: 0 0 25px 0; color: #666; font-size: 15px; line-height: 1.6;">
+                                Hello Team,<br><br>
+                                Please find below the Daily Threat Advisory from the Corporate Security Team. This report highlights key cybersecurity threats, vulnerabilities, and risks identified across global landscapes. We aim to keep you informed and prepared by providing timely insights into emerging security challenges.
+                              </div>
+                              
+                              <!-- Summary box with gradient fallback -->
+                              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; margin-bottom: 0;">
+                                <tr>
+                                  <td style="padding: 0;">
+                                    <!--[if mso]>
+                                    <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width: 100%;">
+                                      <v:fill type="gradient" color="#f8f9fa" color2="#ffffff" angle="135" />
+                                      <v:textbox inset="25px,25px,25px,25px">
+                                    <![endif]-->
+                                    
+                                    <div style="background: #f8f9fa; background: linear-gradient(135deg, #f8f9fa, #ffffff); padding: 25px; border-left: 5px solid #FF6F00;">
+                                      <h3 style="margin: 0 0 15px 0; color: #512DA8; font-size: 20px; font-weight: 700; line-height: 1.2;">
+                                        Overall Summary
+                                      </h3>
+                                      <div style="margin: 0; color: #444; font-size: 16px; line-height: 1.6;">${overallSummary}</div>
+                                    </div>
+                                    
+                                    <!--[if mso]>
+                                      </v:textbox>
+                                    </v:rect>
+                                    <![endif]-->
+                                  </td>
+                                </tr>
+                              </table>
+                              
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
     `;
+
+    // Advisory cards with table layouts
     const advisoryHTMLs = advisories.map(advisory => {
       const getSeverityStyle = (severity: string) => {
         const styles = {
@@ -126,62 +248,200 @@ export function ExportButton({
           low: 'background: #1976D2; color: white;',
           informational: 'background: #9E9E9E; color: white;'
         };
-        return `${styles[severity as keyof typeof styles] || styles.informational} padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 700; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;`;
-      };
-      
-      const getSeverityColor = (severity: string) => {
-        const colors = {
-          critical: '#D32F2F',
-          high: '#F57C00', 
-          medium: '#FBC02D',
-          low: '#1976D2',
-          informational: '#9E9E9E'
-        };
-        return colors[severity as keyof typeof colors] || colors.informational;
+        return styles[severity as keyof typeof styles] || styles.informational;
       };
       
       return `
-        <div style="max-width: 900px; margin: 0 auto 40px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-          <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-            <div style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-start;">
-              <h2 style="margin: 0; color: #FF6F00; font-size: 24px; font-weight: 700; flex: 1;">${advisory.name}</h2>
-              <span style="${getSeverityStyle(advisory.severity)}">${advisory.severity}</span>
-            </div>
-            
-          ${advisory.attackType ? `<div style="padding: 20px 0; border-bottom: 1px solid #f5f5f5;"><h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Attack Type</h3><p style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.attackType}</p></div>` : ''}
-            
-            ${advisory.vulnerability ? `<div style="padding: 20px 0; border-bottom: 1px solid #f5f5f5;"><h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Vulnerability</h3><p style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.vulnerability}</p></div>` : ''}
-            
-            ${advisory.summary ? `<div style="padding: 20px 0; border-bottom: 1px solid #f5f5f5;"><h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Summary</h3><p style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.summary}${advisory.readMoreLink ? ` <a href="${advisory.readMoreLink}" style="color: #FF6F00; text-decoration: none; font-weight: 600;">Read more...</a>` : ''}</p></div>` : ''}
-            
-            ${advisory.threatActor || advisory.deliveryMethod ? `<div style="padding: 20px 0; border-bottom: 1px solid #f5f5f5; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-              ${advisory.threatActor ? `<div><h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Threat Actor</h3><p style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.threatActor}</p></div>` : ''}
-              ${advisory.deliveryMethod ? `<div><h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Delivery Method</h3><p style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.deliveryMethod}</p></div>` : ''}
-            </div>` : ''}
-            
-            ${advisory.mitigation ? `<div style="padding: 20px 0; border-bottom: 1px solid #f5f5f5;"><h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Recommended Actions</h3><p style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.mitigation}</p></div>` : ''}
-            
-            ${advisory.references && advisory.references.length > 0 ? `<div style="padding: 20px 0;"><h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">References</h3><ul style="margin: 0; padding-left: 25px; color: #555; font-size: 16px;">${advisory.references.map(ref => `<li style="margin-bottom: 8px;"><a href="${ref}" style="color: #FF6F00; text-decoration: none; font-weight: 500;">${ref}</a></li>`).join('')}</ul></div>` : ''}
-          </div>
-        </div>
+        <!-- Advisory Card -->
+        <tr>
+          <td style="padding: 0 20px 40px 20px;">
+            <!-- Shadow wrapper -->
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+              <tr>
+                <td style="background: #f5f5f5; padding: 2px;">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; background: #ffffff; border: 1px solid #e0e0e0;">
+                    <tr>
+                      <td style="padding: 30px;">
+                        
+                        <!-- Header with title and severity badge -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; margin-bottom: 25px;">
+                          <tr>
+                            <td width="70%" style="vertical-align: top;">
+                              <h2 style="margin: 0; color: #FF6F00; font-size: 24px; font-weight: 700; line-height: 1.2;">${advisory.name}</h2>
+                            </td>
+                            <td width="30%" style="text-align: right; vertical-align: top;">
+                              <!--[if mso]>
+                              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" arcsize="50%" fill="true" stroke="false" style="height: auto; width: auto;">
+                                <v:fill color="${advisory.severity === 'critical' ? '#D32F2F' : advisory.severity === 'high' ? '#F57C00' : advisory.severity === 'medium' ? '#FBC02D' : advisory.severity === 'low' ? '#1976D2' : '#9E9E9E'}" />
+                                <v:textbox inset="8px,20px,8px,20px">
+                              <![endif]-->
+                              <div style="${getSeverityStyle(advisory.severity)} padding: 8px 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; text-align: center;">${advisory.severity}</div>
+                              <!--[if mso]>
+                                </v:textbox>
+                              </v:roundrect>
+                              <![endif]-->
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        ${advisory.attackType ? `
+                        <!-- Attack Type -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-bottom: 1px solid #f5f5f5;">
+                          <tr>
+                            <td style="padding: 20px 0;">
+                              <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Attack Type</h3>
+                              <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.attackType}</div>
+                            </td>
+                          </tr>
+                        </table>
+                        ` : ''}
+                        
+                        ${advisory.vulnerability ? `
+                        <!-- Vulnerability -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-bottom: 1px solid #f5f5f5;">
+                          <tr>
+                            <td style="padding: 20px 0;">
+                              <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Vulnerability</h3>
+                              <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.vulnerability}</div>
+                            </td>
+                          </tr>
+                        </table>
+                        ` : ''}
+                        
+                        ${advisory.summary ? `
+                        <!-- Summary -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-bottom: 1px solid #f5f5f5;">
+                          <tr>
+                            <td style="padding: 20px 0;">
+                              <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Summary</h3>
+                              <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.summary}${advisory.readMoreLink ? ` <a href="${advisory.readMoreLink}" style="color: #FF6F00; text-decoration: none; font-weight: 600;">Read more...</a>` : ''}</div>
+                            </td>
+                          </tr>
+                        </table>
+                        ` : ''}
+                        
+                        ${advisory.threatActor || advisory.deliveryMethod ? `
+                        <!-- Threat Actor & Delivery Method -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-bottom: 1px solid #f5f5f5;">
+                          <tr>
+                            <td style="padding: 20px 0;">
+                              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                <tr>
+                                  ${advisory.threatActor ? `
+                                  <td width="50%" style="vertical-align: top; padding-right: 15px;">
+                                    <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Threat Actor</h3>
+                                    <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.threatActor}</div>
+                                  </td>
+                                  ` : ''}
+                                  ${advisory.deliveryMethod ? `
+                                  <td width="50%" style="vertical-align: top; padding-left: 15px;">
+                                    <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Delivery Method</h3>
+                                    <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.deliveryMethod}</div>
+                                  </td>
+                                  ` : ''}
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                        ` : ''}
+                        
+                        ${advisory.mitigation ? `
+                        <!-- Recommended Actions -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; border-bottom: 1px solid #f5f5f5;">
+                          <tr>
+                            <td style="padding: 20px 0;">
+                              <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Recommended Actions</h3>
+                              <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.mitigation}</div>
+                            </td>
+                          </tr>
+                        </table>
+                        ` : ''}
+                        
+                        ${advisory.references && advisory.references.length > 0 ? `
+                        <!-- References -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 20px 0 0 0;">
+                              <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">References</h3>
+                              <div style="margin: 0; color: #555; font-size: 16px;">
+                                ${advisory.references.map(ref => `• <a href="${ref}" style="color: #FF6F00; text-decoration: none; font-weight: 500;">${ref}</a><br>`).join('')}
+                              </div>
+                            </td>
+                          </tr>
+                        </table>
+                        ` : ''}
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
       `;
     });
+
+    // Footer with gradient background
     const footer = `
-      <div style="max-width: 900px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        <div style="background: #f8f9fa; padding: 30px; border: 1px solid #e0e0e0; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center;">
-          <p style="margin: 0 0 20px 0; color: #666; font-size: 14px; font-style: italic; line-height: 1.6;">
-            This is an internal LTIMindtree Threat Intel Advisory Do not share externally<br>
-            IoCs are being tracked in the GSOC excel sheet
-          </p>
-          <p style="margin: 0 0 20px 0; color: #512DA8; font-size: 16px; font-weight: 600;">
-            Regards<br>Corporate Security Team
-          </p>
-          <div style="background: linear-gradient(135deg, #512DA8, #6A42C2); color: white; padding: 15px 25px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">
-            ${currentMascot.name} • <span>${currentMascot.tagline}</span>
-          </div>
-        </div>
-      </div>
+              <!-- Footer -->
+              <tr>
+                <td style="padding: 0 20px 20px 20px;">
+                  <!-- Shadow wrapper -->
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                    <tr>
+                      <td style="background: #f5f5f5; padding: 2px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; background: #f8f9fa; border: 1px solid #e0e0e0;">
+                          <tr>
+                            <td style="padding: 30px; text-align: center;">
+                              
+                              <div style="margin: 0 0 20px 0; color: #666; font-size: 14px; font-style: italic; line-height: 1.6;">
+                                This is an internal LTIMindtree Threat Intel Advisory Do not share externally<br>
+                                IoCs are being tracked in the GSOC excel sheet
+                              </div>
+                              
+                              <div style="margin: 0 0 20px 0; color: #512DA8; font-size: 16px; font-weight: 600; line-height: 1.4;">
+                                Regards<br>Corporate Security Team
+                              </div>
+                              
+                              <!-- Mascot tagline button with VML fallback -->
+                              <!--[if mso]>
+                              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" arcsize="10%" fill="true" stroke="false" style="height: 50px; width: 300px;">
+                                <v:fill type="gradient" color="#512DA8" color2="#6A42C2" angle="135" />
+                                <v:textbox inset="15px,25px,15px,25px" style="mso-fit-shape-to-text:true;">
+                              <![endif]-->
+                               <div style="background-color: #512DA8; padding: 15px 25px; font-size: 16px; font-weight: 600; display: inline-block; text-align: center; color: #ffffff;">
+                                 <!--[if !mso]><!-- -->
+                                 <div style="background: linear-gradient(135deg, #512DA8, #6A42C2); padding: 15px 25px; font-size: 16px; font-weight: 600; display: inline-block; text-align: center; color: #ffffff; margin: -15px -25px;">
+                                 <!--<![endif]-->
+                                 ${currentMascot.name} • ${currentMascot.tagline}
+                                 <!--[if !mso]><!-- -->
+                                 </div>
+                                 <!--<![endif]-->
+                               </div>
+                              <!--[if mso]>
+                                </v:textbox>
+                              </v:roundrect>
+                              <![endif]-->
+                              
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+            </table>
+            <!-- End main container -->
+          </td>
+        </tr>
+      </table>
+      <!-- End outer wrapper -->
     `;
+
     return emailHeader + advisoryHTMLs.join('') + footer;
   };
   const copyToClipboard = async () => {
@@ -274,98 +534,28 @@ export function ExportButton({
       setIsExporting(false);
     }
   };
-  const exportAsPDF = async () => {
-    if (advisories.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "No Content",
-        description: "Generate preview first before exporting PDF."
-      });
-      return;
-    }
-    try {
-      setIsExporting(true);
-      toast({
-        title: "Generating PDF",
-        description: "Please wait while we prepare your PDF..."
-      });
-
-      // Create a temporary div with the content
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = await generateEmailHTML();
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.left = '-9999px';
-      tempDiv.style.top = '-9999px';
-      tempDiv.style.background = '#ffffff';
-      tempDiv.style.width = '900px';
-      tempDiv.style.padding = '20px';
-      tempDiv.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-      tempDiv.style.fontSize = '14px';
-      tempDiv.style.lineHeight = '1.6';
-      document.body.appendChild(tempDiv);
-      const canvas = await html2canvas(tempDiv, {
-        width: 940,
-        height: tempDiv.scrollHeight + 40,
-        backgroundColor: '#ffffff',
-        scale: 1.5,
-        useCORS: true,
-        allowTaint: true
-      });
-      document.body.removeChild(tempDiv);
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pdfWidth - 20; // 10mm margin on each side
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 10; // 10mm top margin
-
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pdfHeight - 20; // Account for margins
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight + 10;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pdfHeight - 20;
-      }
-
-      // Add footer with attribution
-      const totalPages = pdf.getNumberOfPages();
-      for (let i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(10);
-        pdf.setTextColor(128, 128, 128);
-        pdf.text('Exported from ThreatNote — built with ❤ by Amrit Sinha', pdfWidth / 2, pdfHeight - 10, {
-          align: 'center'
-        });
-      }
-      pdf.save(`threatnote-advisory-${new Date().toISOString().split('T')[0]}.pdf`);
-      toast({
-        title: "PDF Exported",
-        description: "Advisory PDF file exported successfully."
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Export Failed",
-        description: "Failed to export PDF file."
-      });
-    } finally {
-      setIsExporting(false);
-    }
-  };
   if (advisories.length === 0) return null;
-  return <div className="fixed bottom-6 right-6 z-50">
+  
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+      <Button 
+        onClick={copyToClipboard} 
+        disabled={isExporting} 
+        size="icon" 
+        className="btn-ltim-accent shadow-lg h-12 w-12"
+        title="Copy HTML to Clipboard"
+      >
+        <Copy className="w-5 h-5" />
+      </Button>
       <Button 
         onClick={downloadHTML} 
         disabled={isExporting} 
         size="icon" 
         className="btn-ltim-accent shadow-lg h-12 w-12"
-        title="Export HTML"
+        title="Download HTML File"
       >
         <FileText className="w-5 h-5" />
       </Button>
-    </div>;
+    </div>
+  );
 }
