@@ -63,7 +63,7 @@ export function ExportButton({
     
     // Key threats - using table layout for Outlook compatibility
     const keyThreatsHTML = threatNames.length > 0 ? 
-      `<br><br>Key Threat${threatNames.length > 1 ? 's' : ''}: ` +
+      `<br><br>Key Threat${threatNames.length > 1 ? 's' : ''}:<br>` +
       advisories.filter(a => a.name).map(advisory => 
         `<table style="display: inline-table; vertical-align: middle; margin-right: 12px;"><tr>` +
         `<td style="width: 12px; height: 12px; background-color: ${getSeverityColorHex(advisory.severity)}; padding: 0; margin: 0; border: 0;"></td>` +
@@ -71,7 +71,7 @@ export function ExportButton({
         `</tr></table>`
       ).join('') : '';
     
-    const overallSummary = `Today's <strong>${currentMascot.name}: <u>${currentMascot.description}</u></strong> advisory reports ${advisories.length} threat${advisories.length > 1 ? 's' : ''} identified across global landscapes${severityText}${keyThreatsHTML}`;
+    const overallSummary = `Today's <strong><u>${currentMascot.name}: ${currentMascot.description}</u></strong> advisory reports ${advisories.length} threat${advisories.length > 1 ? 's' : ''} identified across global landscapes${severityText}${keyThreatsHTML}`;
     
     // Outlook-safe email header with VML gradients and table layout
     const emailHeader = `
@@ -321,7 +321,7 @@ export function ExportButton({
                           <tr>
                             <td style="padding: 20px 0;">
                               <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">Summary</h3>
-                              <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.summary}${advisory.readMoreLink ? ` <a href="${advisory.readMoreLink}" style="color: #FF6F00; text-decoration: none; font-weight: 600;">Read more...</a>` : ''}</div>
+                              <div style="margin: 0; color: #555; line-height: 1.6; font-size: 16px;">${advisory.summary}${advisory.readMoreLink ? ` <a href="${advisory.readMoreLink}" style="color: #FF6F00; text-decoration: none; font-weight: 600;"><u>Read more...</u><ExternalLink className="w-3 h-3" /></a>` : ''}</div>
                             </td>
                           </tr>
                         </table>
@@ -403,8 +403,8 @@ export function ExportButton({
                             <td style="padding: 30px; text-align: center;">
                               
                               <div style="margin: 0 0 20px 0; color: #666; font-size: 14px; font-style: italic; line-height: 1.6;">
-                                This is an internal LTIMindtree Threat Intel Advisory Do not share externally<br>
-                                IoCs are being tracked in the GSOC excel sheet
+                                This is an internal LTIMindtree Threat Intel Advisory. Do not share externally<br>
+                                IoCs are being tracked in the GSOC excel sheet.
                               </div>
                               
                               <div style="margin: 0 0 20px 0; color: #512DA8; font-size: 16px; font-weight: 600; line-height: 1.4;">

@@ -20,49 +20,49 @@ export const mascots: Record<number, MascotData> = {
     emoji: "🐢",
     description: "Protector of Time",
     image: sundayTortoise,
-    tagline: "Slow, Steady, Always Secure."
+    tagline: "Slow, Steady, Always Secure"
   },
   1: { // Monday
     name: "Cerberus",
     emoji: "🐺",
     description: "Guardian",
     image: mondayCerberus,
-    tagline: "Guard the Gates, Stop the Threats."
+    tagline: "Guard the Gates, Stop the Threats"
   },
   2: { // Tuesday
     name: "Phoenix",
     emoji: "🔥",
     description: "Resilient One",
     image: tuesdayPhoenix,
-    tagline: "Rise Stronger, Every Time."
+    tagline: "Rise Stronger, Every Time"
   },
   3: { // Wednesday
     name: "Falcon",
     emoji: "🦅",
     description: "Hunter",
     image: wednesdayFalcon,
-    tagline: "Strike Fast, Hunt Smarter."
+    tagline: "Strike Fast, Hunt Smarter"
   },
   4: { // Thursday
     name: "Owl",
     emoji: "🦉",
     description: "Watcher",
     image: thursdayOwl,
-    tagline: "Stay Vigilant, See the Unseen."
+    tagline: "Stay Vigilant, See the Unseen"
   },
   5: { // Friday
     name: "Panther",
     emoji: "🐆",
     description: "Shadow Stalker",
     image: fridayPanther,
-    tagline: "Silent but Always Watching."
+    tagline: "Silent but Always Watching"
   },
   6: { // Saturday
     name: "Dragon",
     emoji: "🐉",
     description: "Defender",
     image: saturdayDragon,
-    tagline: "Breathe Fire on Rising Threats."
+    tagline: "Breathe Fire on Rising Threats"
   }
 };
 

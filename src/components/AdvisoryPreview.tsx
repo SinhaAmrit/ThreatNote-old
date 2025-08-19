@@ -39,7 +39,7 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
       severityText = ` including ${severityCounts.join(" and ")}`;
     }
 
-    return `Today's ${currentMascot.name} ${currentMascot.description} advisory reports ${advisories.length} threat${advisories.length > 1 ? 's' : ''} identified across global landscapes${severityText}${threatNames.length > 0 ? `\nKey Threat${threatNames.length > 1 ? 's' : ''}: ${threatNames.join(" ")}` : ''}`;
+    return `Today's ${currentMascot.name} ${currentMascot.description} advisory reports ${advisories.length} threat${advisories.length > 1 ? 's' : ''} identified across global landscapes${severityText}${threatNames.length > 0 ? `\nKey Threat${threatNames.length > 1 ? 's' : ''}:\n ${threatNames.join(" ")}` : ''}`;
   };
 
   return (
@@ -87,7 +87,7 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
               </h3>
               <div className="text-foreground leading-relaxed">
                 <p className="mb-4">
-                  Today's <strong>{currentMascot.name}: <u>{currentMascot.description}</u></strong> advisory reports {advisories.length} threat{advisories.length > 1 ? 's' : ''} identified across global landscapes{
+                  Today's <strong><u>{currentMascot.name}: {currentMascot.description}</u></strong> advisory reports {advisories.length} threat{advisories.length > 1 ? 's' : ''} identified across global landscapes{
                     (() => {
                       const criticalCount = advisories.filter(a => a.severity === "critical").length;
                       const highCount = advisories.filter(a => a.severity === "high").length;
@@ -102,7 +102,7 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
                 </p>
                 {advisories.filter(a => a.name).length > 0 && (
                   <div>
-                    <p className="mb-2">Key Threat{advisories.filter(a => a.name).length > 1 ? 's' : ''}:</p>
+                    <p className="mb-2">Key Threat{advisories.filter(a => a.name).length > 1 ? 's' : ''}:<br></br></p>
                     <div className="flex flex-wrap gap-2">
                       {advisories.filter(a => a.name).map((advisory, index) => {
                         const getSeverityColor = (severity: string) => {
@@ -198,7 +198,7 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
                         rel="noopener noreferrer" 
                         className="text-orange-500 hover:text-orange-600 underline inline-flex items-center gap-1 transition-colors"
                       >
-                        Read more...
+                        <u>Read more...</u>
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </span>
@@ -261,8 +261,8 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
         <CardContent className="py-6 bg-muted/30">
           <div className="text-center space-y-4">
             <p className="text-sm text-muted-foreground font-medium">
-              This is an internal LTIMindtree Threat Intel Advisory Do not share externally<br/>
-              IoCs are being tracked in the GSOC excel sheet
+              This is an internal LTIMindtree Threat Intel Advisory. Do not share externally.<br/>
+              IoCs are being tracked in the GSOC excel sheet.
             </p>
             <p className="text-base text-primary font-semibold">
               Regards<br/>Corporate Security Team

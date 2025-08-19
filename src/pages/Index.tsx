@@ -177,7 +177,7 @@ const Index = () => {
               
               ${advisory.vulnerability ? `<div style="padding: 15px 0; border-bottom: 1px solid #f0f0f0;"><h3 style="margin: 0 0 8px 0; color: #512DA8; font-size: 16px; font-weight: 600;">Vulnerability</h3><p style="margin: 0; color: #555; line-height: 1.5; font-size: 14px;">${advisory.vulnerability}</p></div>` : ''}
               
-              ${advisory.summary ? `<div style="padding: 15px 0; border-bottom: 1px solid #f0f0f0;"><h3 style="margin: 0 0 8px 0; color: #512DA8; font-size: 16px; font-weight: 600;">Summary</h3><p style="margin: 0; color: #555; line-height: 1.5; font-size: 14px;">${advisory.summary}${advisory.readMoreLink ? ` <a href="${advisory.readMoreLink}" style="color: #FF6F00; text-decoration: none;">Read more...</a>` : ''}</p></div>` : ''}
+              ${advisory.summary ? `<div style="padding: 15px 0; border-bottom: 1px solid #f0f0f0;"><h3 style="margin: 0 0 8px 0; color: #512DA8; font-size: 16px; font-weight: 600;">Summary</h3><p style="margin: 0; color: #555; line-height: 1.5; font-size: 14px;">${advisory.summary}${advisory.readMoreLink ? ` <a href="${advisory.readMoreLink}" style="color: #FF6F00; text-decoration: none;"><u>Read more...</u></a>` : ''}</p></div>` : ''}
               
               ${advisory.threatActor ? `<div style="padding: 15px 0; border-bottom: 1px solid #f0f0f0;"><h3 style="margin: 0 0 8px 0; color: #512DA8; font-size: 16px; font-weight: 600;">Threat Actor</h3><p style="margin: 0; color: #555; line-height: 1.5; font-size: 14px;">${advisory.threatActor}</p></div>` : ''}
               
