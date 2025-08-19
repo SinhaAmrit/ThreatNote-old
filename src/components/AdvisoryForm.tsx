@@ -14,13 +14,14 @@ export interface AdvisoryData {
   attackType: string;
   vulnerability: string;
   severity: "critical" | "high" | "medium" | "low" | "informational";
+  cvssScore?: string;
   date: string;
   threatActor: string;
   deliveryMethod: string;
   summary: string;
   readMoreLink: string;
   mitigation: string;
-  references: string[];
+  references: string;
 }
 
 interface AdvisoryFormProps {
@@ -35,12 +36,13 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
     attackType: advisory.attackType || "",
     vulnerability: advisory.vulnerability || "",
     severity: advisory.severity || "informational",
+    cvssScore: advisory.cvssScore || "",
     threatActor: advisory.threatActor || "",
     deliveryMethod: advisory.deliveryMethod || "",
     summary: advisory.summary || "",
     readMoreLink: advisory.readMoreLink || "",
     mitigation: advisory.mitigation || "",
-    references: advisory.references || []
+    references: advisory.references || ""
   };
 
   const form = useForm({
@@ -86,7 +88,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                     Name *
                   </FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       placeholder="Enter threat/vulnerability name"
                       className="input-ltim"
                       {...field}
@@ -107,7 +109,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                       Attack Type *
                     </FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         placeholder="e.g., Remote Code Execution"
                         className="input-ltim"
                         {...field}
@@ -148,6 +150,29 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
 
             <FormField
               control={form.control}
+              name="cvssScore"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-primary">
+                    CVSS Score (optional)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., 9.8, 7.5, or 'Not Found'"
+                      className="input-ltim"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            </div>
+
+            <FormField
+              control={form.control}
               name="vulnerability"
               render={({ field }) => (
                 <FormItem>
@@ -155,7 +180,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                     Vulnerability *
                   </FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Describe the vulnerability"
                       className="textarea-ltim min-h-[80px]"
                       {...field}
@@ -176,7 +201,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                       Threat Actor
                     </FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         placeholder="e.g., APT Group Name"
                         className="input-ltim"
                         {...field}
@@ -196,7 +221,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                       Delivery Method
                     </FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         placeholder="e.g., Email, Exploit Kit"
                         className="input-ltim"
                         {...field}
@@ -217,7 +242,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                     Summary *
                   </FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of the threat advisory"
                       className="textarea-ltim min-h-[100px]"
                       {...field}
@@ -237,7 +262,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                     Read More Link
                   </FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       placeholder="https://example.com/detailed-report"
                       className="input-ltim"
                       {...field}
@@ -257,7 +282,7 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
                     Mitigation *
                   </FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Recommended actions and mitigation steps"
                       className="textarea-ltim min-h-[120px]"
                       {...field}
@@ -274,14 +299,14 @@ export function AdvisoryForm({ advisory, onUpdate, index }: AdvisoryFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-primary">
-                    References (comma-separated URLs, 1-2 links)
+                    References (comma-separated URLs, 1-3 links)
                   </FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="https://example.com/advisory, https://cve.mitre.org"
+                    <Textarea
+                      placeholder="https://example.com/advisory, https://cve.mitre.org, https://nvd.nist.gov"
                       className="textarea-ltim"
-                      value={field.value?.join(", ") || ""}
-                      onChange={(e) => field.onChange(e.target.value.split(",").map(item => item.trim()).filter(Boolean))}
+                      value={field.value || ""}
+                      onChange={(e) => field.onChange(e.target.value)}
                     />
                   </FormControl>
                   <FormMessage />

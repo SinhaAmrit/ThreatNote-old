@@ -164,8 +164,15 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
                   </div>
                 </div>
               </div>
-              <div className="severity-badge-hover">
-                <SeverityBadge severity={advisory.severity} />
+              <div className="flex items-center gap-2">
+                <div className="severity-badge-hover">
+                  <SeverityBadge severity={advisory.severity} />
+                </div>
+                {advisory.cvssScore && advisory.cvssScore.toLowerCase() !== "not found" && (
+                  <span className="text-xs font-medium px-2 py-1 bg-muted rounded-md">
+                    CVSS: {advisory.cvssScore}
+                  </span>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -224,19 +231,23 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
               </div>
             )}
 
-            {advisory.references && advisory.references.length > 0 && (
+{advisory.references && advisory.references.trim() && (
               <div>
                 <h4 className="font-semibold text-primary mb-2">References</h4>
                 <ul className="space-y-1">
-                  {advisory.references.map((ref, idx) => (
-                    <li key={idx}>
-                      <a href={ref} target="_blank" rel="noopener noreferrer" 
-                         className="text-sm text-orange-500 hover:text-orange-600 underline break-all inline-flex items-center gap-1 transition-colors">
-                        {ref}
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </li>
-                  ))}
+                  {advisory.references.split(',').slice(0, 3).map((ref, idx) => {
+                    const trimmedRef = ref.trim();
+                    if (!trimmedRef) return null;
+                    return (
+                      <li key={idx}>
+                        <a href={trimmedRef} target="_blank" rel="noopener noreferrer" 
+                           className="text-sm text-orange-500 hover:text-orange-600 underline break-all inline-flex items-center gap-1 transition-colors">
+                          {trimmedRef}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}

@@ -250,6 +250,11 @@ export function ExportButton({
         };
         return styles[severity as keyof typeof styles] || styles.informational;
       };
+
+      // Parse references into an array and limit to 3
+      const referencesArray = advisory.references 
+        ? advisory.references.split(',').map(ref => ref.trim()).filter(ref => ref.length > 0).slice(0, 3)
+        : [];
       
       return `
         <!-- Advisory Card -->
@@ -275,7 +280,9 @@ export function ExportButton({
                                 <v:fill color="${advisory.severity === 'critical' ? '#D32F2F' : advisory.severity === 'high' ? '#F57C00' : advisory.severity === 'medium' ? '#FBC02D' : advisory.severity === 'low' ? '#1976D2' : '#9E9E9E'}" />
                                 <v:textbox inset="8px,20px,8px,20px">
                               <![endif]-->
-                              <div style="${getSeverityStyle(advisory.severity)} padding: 8px 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; text-align: center;">${advisory.severity}</div>
+                              <div style="${getSeverityStyle(advisory.severity)} padding: 8px 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; text-align: center;">
+                                ${advisory.severity}${advisory.cvssScore && advisory.cvssScore !== "Not Found" ? ` • ${advisory.cvssScore}` : ''}
+                              </div>
                               <!--[if mso]>
                                 </v:textbox>
                               </v:roundrect>
@@ -358,20 +365,19 @@ export function ExportButton({
                         </table>
                         ` : ''}
                         
-                        ${advisory.references && advisory.references.length > 0 ? `
+                        ${referencesArray.length > 0 ? `
                         <!-- References -->
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
                           <tr>
                             <td style="padding: 20px 0 0 0;">
                               <h3 style="margin: 0 0 12px 0; color: #512DA8; font-size: 18px; font-weight: 600;">References</h3>
                               <div style="margin: 0; color: #555; font-size: 16px;">
-                                ${advisory.references.map(ref => `• <a href="${ref}" style="color: #FF6F00; text-decoration: none; font-weight: 500;">${ref}</a><br>`).join('')}
+                                ${referencesArray.map(ref => `• <a href="${ref}" style="color: #FF6F00; text-decoration: none; font-weight: 500;">${ref}</a><br>`).join('')}
                               </div>
                             </td>
                           </tr>
                         </table>
                         ` : ''}
-                        
                       </td>
                     </tr>
                   </table>
