@@ -299,7 +299,7 @@ const Index = () => {
             <Shield className="w-12 h-12 text-accent hover-scale" />
             <div>
               <h1 className="text-2xl font-bold text-primary">ThreatNote</h1>
-              <p className="text-sm text-muted-foreground">Made with ❤ By <a href="https://www.google.com/search?q=sinhaamrit" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Amrit Sinha</a></p>
+              <p className="text-sm text-muted-foreground">Made with ❤ By <a href="https://github.com/SinhaAmrit/ThreatNote-old" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Amrit Sinha</a></p>
             </div>
           </div>
           <div className="flex items-center gap-2">
