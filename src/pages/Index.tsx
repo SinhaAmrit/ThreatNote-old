@@ -281,8 +281,8 @@ const Index = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     toast({
-      title: "HTML Downloaded",
-      description: "Advisory HTML file downloaded successfully."
+      title: "HTML Exported",
+      description: "Advisory HTML file exported successfully."
     });
   };
   const updateAdvisory = (index: number, updatedAdvisory: AdvisoryData) => {
@@ -335,6 +335,8 @@ const Index = () => {
                   <SelectItem value="3">3 Advisories</SelectItem>
                   <SelectItem value="4">4 Advisories</SelectItem>
                   <SelectItem value="5">5 Advisories</SelectItem>
+                  <SelectItem value="6">6 Advisories</SelectItem>
+                  <SelectItem value="7">7 Advisories</SelectItem>
                 </SelectContent>
               </Select>
             </div>

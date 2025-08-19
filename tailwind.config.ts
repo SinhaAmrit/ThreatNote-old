@@ -36,6 +36,14 @@ export default {
         'severity-low': 'hsl(var(--severity-low))',
         'severity-info': 'hsl(var(--severity-info))',
         
+        // Beautiful Toast Colors
+        'toast-success': 'hsl(var(--toast-success))',
+        'toast-success-foreground': 'hsl(var(--toast-success-foreground))',
+        'toast-warning': 'hsl(var(--toast-warning))',
+        'toast-warning-foreground': 'hsl(var(--toast-warning-foreground))',
+        'toast-error': 'hsl(var(--toast-error))',
+        'toast-error-foreground': 'hsl(var(--toast-error-foreground))',
+        
         // Standard Design System Colors
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

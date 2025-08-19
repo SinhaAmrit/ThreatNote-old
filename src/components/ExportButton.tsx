@@ -527,8 +527,8 @@ export function ExportButton({
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       toast({
-        title: "HTML Downloaded",
-        description: "Advisory HTML file downloaded successfully."
+        title: "HTML Exported",
+        description: "Advisory HTML file exported successfully."
       });
     } catch (error) {
       toast({

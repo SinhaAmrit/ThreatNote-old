@@ -46,7 +46,15 @@
     --severity-low: 210 77% 46%;         /* Blue #1976D2 */
     --severity-info: 0 0% 62%;           /* Gray #9E9E9E */
 
-    --destructive: 0 73% 52%;
+    /* Beautiful Toast Colors */
+    --toast-success: 142 76% 36%;        /* Beautiful emerald green */
+    --toast-success-foreground: 0 0% 100%;
+    --toast-warning: 45 93% 47%;         /* Beautiful golden yellow */
+    --toast-warning-foreground: 0 0% 0%;
+    --toast-error: 0 84% 60%;            /* Beautiful coral red */
+    --toast-error-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;            /* Updated to match toast error */
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 13% 91%;
@@ -106,7 +114,15 @@
     --accent: 25 100% 60%;               /* Lighter orange for dark mode */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 73% 60%;
+    /* Beautiful Toast Colors - Dark Mode */
+    --toast-success: 142 69% 58%;        /* Lighter emerald for dark mode */
+    --toast-success-foreground: 0 0% 0%;
+    --toast-warning: 45 93% 47%;         /* Same golden yellow */
+    --toast-warning-foreground: 0 0% 0%;
+    --toast-error: 0 84% 60%;            /* Beautiful coral red */
+    --toast-error-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;            /* Updated to match toast error */
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 20% 15%;
