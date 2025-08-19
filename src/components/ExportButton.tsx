@@ -63,11 +63,11 @@ export function ExportButton({
     
     // Key threats - using table layout for Outlook compatibility
     const keyThreatsHTML = threatNames.length > 0 ? 
-      `<br><br>Key Threat${threatNames.length > 1 ? 's' : ''}:<br>` +
+      `<br><br>Key Threat${threatNames.length > 1 ? 's' : ''}:` +
       advisories.filter(a => a.name).map(advisory => 
         `<table style="display: inline-table; vertical-align: middle; margin-right: 12px;"><tr>` +
         `<td style="width: 12px; height: 12px; background-color: ${getSeverityColorHex(advisory.severity)}; padding: 0; margin: 0; border: 0;"></td>` +
-        `<td style="color: #FF6F00; font-weight: 600; padding-left: 6px; padding-top: 0; padding-bottom: 0; border: 0;">${advisory.name}</td>` +
+        `<td style="color: #FF6F00; font-weight: 600; padding-left: 6px; padding-top: 0; padding-bottom: 0; border: 0;">${advisory.name}</td><br/>` +
         `</tr></table>`
       ).join('') : '';
     

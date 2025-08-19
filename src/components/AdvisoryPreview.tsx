@@ -119,7 +119,7 @@ export function AdvisoryPreview({ advisories }: AdvisoryPreviewProps) {
                         return (
                           <div key={index} className="flex items-center gap-2">
                             <div className={`w-3 h-3 rounded-sm ${getSeverityColor(advisory.severity)}`}></div>
-                            <span className="text-orange-500 font-medium">{advisory.name}</span>
+                            <span className="text-orange-500 font-medium">{advisory.name}</span><br/>
                           </div>
                         );
                       })}
