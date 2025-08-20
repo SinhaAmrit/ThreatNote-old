@@ -49,30 +49,30 @@ export function ExportButton({
     if (severityCounts.length > 0) {
       severityText = ` including ${severityCounts.join(" and ")}`;
     }
-    
+
     const getSeverityColorHex = (severity: string) => {
       const colors = {
         critical: '#ef4444',
-        high: '#f97316', 
+        high: '#f97316',
         medium: '#eab308',
         low: '#3b82f6',
         informational: '#6b7280'
       };
       return colors[severity as keyof typeof colors] || colors.informational;
     };
-    
+
     // Key threats - using table layout for Outlook compatibility
-    const keyThreatsHTML = threatNames.length > 0 ? 
+    const keyThreatsHTML = threatNames.length > 0 ?
       `<br><br>Key Threat${threatNames.length > 1 ? 's' : ''}:` +
-      advisories.filter(a => a.name).map(advisory => 
+      advisories.filter(a => a.name).map(advisory =>
         `<table style="display: inline-table; vertical-align: middle; margin-right: 12px;"><tr>` +
         `<td style="width: 12px; height: 12px; background-color: ${getSeverityColorHex(advisory.severity)}; padding: 0; margin: 0; border: 0;"></td>` +
         `<td style="color: #FF6F00; font-weight: 600; padding-left: 6px; padding-top: 0; padding-bottom: 0; border: 0;">${advisory.name}</td><br/>` +
         `</tr></table>`
       ).join('') : '';
-    
+
     const overallSummary = `Today's <strong><u>${currentMascot.name}: ${currentMascot.description}</u></strong> advisory reports ${advisories.length} threat${advisories.length > 1 ? 's' : ''} identified across global landscapes${severityText}${keyThreatsHTML}`;
-    
+
     // Outlook-safe email header with VML gradients and table layout
     const emailHeader = `
       <!-- Outer wrapper table for maximum compatibility -->
@@ -252,10 +252,10 @@ export function ExportButton({
       };
 
       // Parse references into an array and limit to 3
-      const referencesArray = advisory.references 
+      const referencesArray = advisory.references
         ? advisory.references.split(',').map(ref => ref.trim()).filter(ref => ref.length > 0).slice(0, 3)
         : [];
-      
+
       return `
         <!-- Advisory Card -->
         <tr>
@@ -272,7 +272,8 @@ export function ExportButton({
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; margin-bottom: 25px;">
                           <tr>
                             <td width="70%" style="vertical-align: top;">
-                              <h2 style="margin: 0; color: #FF6F00; font-size: 24px; font-weight: 700; line-height: 1.2;">${advisory.name}</h2>
+                              <h2 style="margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2;">
+                              <a href=${advisory.readMoreLink} target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: #FF6F00">${advisory.name}</a></h2>
                             </td>
                             <td width="30%" style="text-align: right; vertical-align: top;">
                               <!--[if mso]>
@@ -541,22 +542,22 @@ export function ExportButton({
     }
   };
   if (advisories.length === 0) return null;
-  
+
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
-      <Button 
-        onClick={copyToClipboard} 
-        disabled={isExporting} 
-        size="icon" 
+      <Button
+        onClick={copyToClipboard}
+        disabled={isExporting}
+        size="icon"
         className="btn-ltim-accent shadow-lg h-12 w-12"
         title="Copy HTML to Clipboard"
       >
         <Copy className="w-5 h-5" />
       </Button>
-      <Button 
-        onClick={downloadHTML} 
-        disabled={isExporting} 
-        size="icon" 
+      <Button
+        onClick={downloadHTML}
+        disabled={isExporting}
+        size="icon"
         className="btn-ltim-accent shadow-lg h-12 w-12"
         title="Download HTML File"
       >
